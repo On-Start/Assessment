@@ -5,6 +5,11 @@
   text-align: center;
 }
 
+input{
+  margin: 5px;
+  width: 20rem;
+  height: 2rem;
+}
 
 .logo {
   height: 6em;

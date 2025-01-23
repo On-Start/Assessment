@@ -3,6 +3,7 @@ import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import Register from "./components/Register";
 import VerifyEmail from './components/VerifyEmail';
+import './App.css';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("token");
