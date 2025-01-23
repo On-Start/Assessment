@@ -7,7 +7,7 @@ const VerifyEmail = () => {
   useEffect(() => {
     // Set a timer to navigate to /login after 5 seconds (5000ms)
     const timer = setTimeout(() => {
-      navigate.push("/login"); // Navigate to /login route
+      navigate("/login"); // Navigate to /login route
     }, 5000);
 
     // Clean up the timer when the component unmounts
