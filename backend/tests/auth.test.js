@@ -27,9 +27,9 @@ describe('Test the backend routes', () => {
 
     test('POST /auth/register should create a user', async () => {
         const newUser = {
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'johndoe@example.com',
+            firstName: 'Dhruv',
+            lastName: 'Gupta',
+            email: 'dhruvgahoi.07@gmail.com',
             phone: '1234567890',
             password: 'password123'
         };
@@ -42,43 +42,61 @@ describe('Test the backend routes', () => {
     });
 
     test('POST /auth/register should return error if email is already in use', async () => {
+        // Insert a user into the database
         const existingUser = {
-            firstName: 'Jane',
-            lastName: 'Doe',
-            email: 'johndoe@example.com',
-            phone: '0987654321',
-            password: 'password123'
+            firstName: 'Dhruv',
+            lastName: 'Gupta',
+            email: 'dhruvgahoi.07@gmail.com',
+            phone: '1234567890',
+            password: await bcrypt.hash('password123', 12),
         };
-
-        const res = await request(app)
-            .post('/auth/register')
-            .send(existingUser);
+        await new User(existingUser).save();
+    
+        // Attempt to register with the same email
+        const newUser = {
+            firstName: 'Dhruv',
+            lastName: 'Gupta',
+            email: 'dhruvgahoi.07@gmail.com',
+            phone: '9876543210',
+            password: 'password123',
+        };
+    
+        const res = await request(app).post('/auth/register').send(newUser);
         expect(res.status).toBe(400);
         expect(res.body.message).toBe('Email already in use.');
     });
+    
 
     test('POST /auth/login should return a token and user details for valid credentials', async () => {
-        const user = new User({
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'johndoe@example.com',
+        // Register a new user via POST /auth/register
+        const newUser = {
+            firstName: 'Dhruv',
+            lastName: 'Gupta',
+            email: 'dhruvgahoi.07@gmail.com',
             phone: '1234567890',
-            password: await bcrypt.hash('password123', 12)
-        });
-        await user.save();
-
-        const loginDetails = {
-            email: 'johndoe@example.com',
-            password: 'password123'
+            password: 'password123',  // Plain password (it will be hashed in the backend)
+            emailVerified: true,
         };
 
-        const res = await request(app)
+        await new User(newUser).save();
+    
+        
+        // Now attempt to login with the same credentials
+        const loginDetails = {
+            email: 'dhruvgahoi.07@gmail.com',
+            password: 'password123',
+        };
+    
+        const loginRes = await request(app)
             .post('/auth/login')
             .send(loginDetails);
-        expect(res.status).toBe(200);
-        expect(res.body.message).toBe('Login successful.');
-        expect(res.body.token).toBeDefined();
-        expect(res.body.user.email).toBe('johndoe@example.com');
+    
+        expect(loginRes.status).toBe(200); // Expect successful login
+        expect(loginRes.body.message).toBe('Login successful.');
+        expect(loginRes.body.token).toBeDefined();
+        expect(loginRes.body.user.email).toBe('dhruvgahoi.07@gmail.com');
+        expect(loginRes.body.user.firstName).toBe('Dhruv');
+        expect(loginRes.body.user.lastName).toBe('Gupta');
     });
 
     test('POST /auth/login should return error for invalid credentials', async () => {
@@ -96,9 +114,9 @@ describe('Test the backend routes', () => {
 
     test('POST /auth/login should return error if email is not verified', async () => {
         const user = new User({
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'johndoe@example.com',
+            firstName: 'Dhruv',
+            lastName: 'Gupta',
+            email: 'dhruvgahoi.07@gmail.com',
             phone: '1234567890',
             password: await bcrypt.hash('password123', 12),
             emailVerified: false
@@ -106,7 +124,7 @@ describe('Test the backend routes', () => {
         await user.save();
 
         const loginDetails = {
-            email: 'johndoe@example.com',
+            email: 'dhruvgahoi.07@gmail.com',
             password: 'password123'
         };
 
@@ -119,9 +137,9 @@ describe('Test the backend routes', () => {
 
     test('GET /auth/verify-email should verify email with valid token', async () => {
         const user = new User({
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'johndoe@example.com',
+            firstName: 'Dhruv',
+            lastName: 'Gupta',
+            email: 'dhruvgahoi.07@gmail.com',
             phone: '1234567890',
             password: await bcrypt.hash('password123', 12),
             verificationToken: 'validtoken123'

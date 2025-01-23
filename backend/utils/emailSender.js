@@ -5,7 +5,7 @@ exports.sendVerificationEmail = async (email, token) => {
         service: 'gmail',
         auth: {
             user: process.env.EMAIL,
-            pass: process.env.EMAIL_PASSWORD  // Ensure this is an App Password
+            pass: process.env.EMAIL_PASSWORD  
         }
     });
 

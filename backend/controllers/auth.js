@@ -23,7 +23,7 @@ exports.registerUser = async (req, res) => {
         } catch (error) {
             return res.status(500).json({ message: 'Failed to send verification email. Please try again later.' });
         }
-        
+
         await newUser.save();
         res.status(201).json({ message: 'User registered. Please check your email for verification link.' });
     } catch (error) {
@@ -51,7 +51,16 @@ exports.loginUser = async (req, res) => {
         }
 
         const token = generateToken(user);
-        res.status(200).json({ message: 'Login successful.', token, user });
+        return res.status(200).json({
+            message: 'Login successful.',
+            token,
+            user: {
+                id: user._id,
+                email: user.email,
+                firstName: user.firstName,
+                lastName: user.lastName,
+            },
+        });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ message: 'Server error. Please try again later.' });
